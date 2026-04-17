@@ -2,45 +2,14 @@
 \ProvidesClass{dndnote}[2025/02/14 Minimal note class]
 
 \newcommand{\dndnotefontsize}{24pt}
-\newcommand{\dndnoteleadingfactor}{1.0}
 \newdimen\dndnotebaselineskip
 
 \ExplSyntaxOn
-\cs_new_protected:Npn \dndnote_set_leading:n #1
-  {
-    \renewcommand{\dndnoteleadingfactor}{#1}
-  }
-\cs_new_protected:Npn \dndnote_set_baselineskip:
-  {
-    \dim_set:Nn \dndnotebaselineskip
-      {
-        \fp_to_dim:n
-          { \dndnoteleadingfactor * \dim_to_fp:n { \dndnotefontsize } }
-      }
-  }
-\cs_new_protected:Npn \dndnotesetbaselineskip
-  {
-    \dndnote_set_baselineskip:
-  }
 \cs_new_protected:Npn \dndnote_process_option:n #1
   {
     \regex_match:nnTF { \A \d+pt \Z } {#1}
       { \renewcommand{\dndnotefontsize}{#1} }
-      {
-        \seq_set_split:Nnn \l_tmpa_seq { = } {#1}
-        \int_compare:nNnTF { \seq_count:N \l_tmpa_seq } = { 2 }
-          {
-            \str_if_eq:eeTF { \seq_item:Nn \l_tmpa_seq { 1 } } { leading }
-              {
-                \tl_set:Ne \l_tmpa_tl { \seq_item:Nn \l_tmpa_seq { 2 } }
-                \regex_match:nVTF { \A (?: \d+ | \d+\.\d+ ) \Z } \l_tmpa_tl
-                  { \exp_args:NV \dndnote_set_leading:n \l_tmpa_tl }
-                  { \PassOptionsToClass{#1}{article} }
-              }
-              { \PassOptionsToClass{#1}{article} }
-          }
-          { \PassOptionsToClass{#1}{article} }
-      }
+      { \PassOptionsToClass{#1}{article} }
   }
 \cs_new_protected:Npn \dndnote_process_current_option:
   {
@@ -117,7 +86,7 @@
 }
 
 \AtBeginDocument{%
-  \dndnotesetbaselineskip
+  \dndnotebaselineskip=\dndnotefontsize\relax
   \fontsize{\dndnotefontsize}{\dndnotebaselineskip}\selectfont
   \AddToShipoutPictureBG{\dndnoteapplybackground}%
   \ifx\dndnotefontfile\dndnoteempty
