@@ -55,8 +55,10 @@
 \fi
 
 \newcommand{\dndnoteempty}{}
-\let\dndnotebackgroundfile\dndnoteempty
-\let\dndnotefontfile\dndnoteempty
+\newcommand{\dndnotedefaultbackground}{pergament-papier-hintergrund.jpg}
+\newcommand{\dndnotedefaultfont}{Rock Salt}
+\let\dndnotebackgroundfile\dndnotedefaultbackground
+\let\dndnotefontfile\dndnotedefaultfont
 
 \newcommand{\dndnotebackground}[1]{%
   \gdef\dndnotebackgroundfile{#1}%
@@ -95,6 +97,30 @@
     \fi
   \fi
 }
+\newcommand{\dndnoteapplyfont}[1]{%
+  \IfFontExistsTF{#1}{%
+    \dndnotesetmainfont{#1}%
+  }{%
+    \filename@parse{#1}%
+    \ifx\filename@area\@empty
+      \ifx\filename@ext\@empty
+        \ClassWarning{dndnote}{Font '#1' not found. Using the default LaTeX font}%
+      \else
+        \IfFileExists{#1}{%
+          \dndnotesetmainfont{#1}%
+        }{%
+          \ClassWarning{dndnote}{Font file '#1' not found. Using the default LaTeX font}%
+        }%
+      \fi
+    \else
+      \IfFileExists{#1}{%
+        \dndnotesetmainfont{#1}%
+      }{%
+        \ClassWarning{dndnote}{Font file '#1' not found. Using the default LaTeX font}%
+      }%
+    \fi
+  }%
+}
 \makeatother
 
 \newcommand{\dndnoteapplybackground}{%
@@ -121,11 +147,7 @@
     \ifPDFTeX
       \ClassWarning{dndnote}{Custom font files require XeLaTeX or LuaLaTeX. Using the default LaTeX font}%
     \else
-      \IfFileExists{\dndnotefontfile}{%
-        \dndnotesetmainfont{\dndnotefontfile}%
-      }{%
-        \ClassWarning{dndnote}{Font file '\dndnotefontfile' not found. Using the default LaTeX font}%
-      }%
+      \dndnoteapplyfont{\dndnotefontfile}%
     \fi
   \fi
 }
