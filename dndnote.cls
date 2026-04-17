@@ -108,6 +108,7 @@
   \dndnotebaselineskip=\dndnotefontsize\relax
   \fontsize{\dndnotefontsize}{\dndnotebaselineskip}\selectfont
   \raggedright
+  \pagestyle{empty}
   \AddToShipoutPictureBG{\dndnoteapplybackground}%
   \ifx\dndnotefontfile\dndnoteempty
   \else
