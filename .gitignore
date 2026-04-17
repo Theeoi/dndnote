@@ -1,0 +1,4 @@
+.codex
+.latex-aux/
+*.synctex.gz
+*.pdf
