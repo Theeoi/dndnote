@@ -2,14 +2,33 @@
 \ProvidesClass{dndnote}[2025/02/14 Minimal note class]
 
 \newcommand{\dndnotefontsize}{24pt}
+\newcommand{\dndnotemargin}{22mm}
 \newdimen\dndnotebaselineskip
 
 \ExplSyntaxOn
+\cs_new_protected:Npn \dndnote_set_margin:n #1
+  {
+    \renewcommand{\dndnotemargin}{#1}
+  }
 \cs_new_protected:Npn \dndnote_process_option:n #1
   {
     \regex_match:nnTF { \A \d+pt \Z } {#1}
       { \renewcommand{\dndnotefontsize}{#1} }
-      { \PassOptionsToClass{#1}{article} }
+      {
+        \seq_set_split:Nnn \l_tmpa_seq { = } {#1}
+        \int_compare:nNnTF { \seq_count:N \l_tmpa_seq } = { 2 }
+          {
+            \str_if_eq:eeTF { \seq_item:Nn \l_tmpa_seq { 1 } } { margin }
+              {
+                \tl_set:Ne \l_tmpa_tl { \seq_item:Nn \l_tmpa_seq { 2 } }
+                \regex_match:nVTF { \A (?: \d+ | \d+\.\d+ ) (?: pt | mm | cm | in ) \Z } \l_tmpa_tl
+                  { \exp_args:NV \dndnote_set_margin:n \l_tmpa_tl }
+                  { \PassOptionsToClass{#1}{article} }
+              }
+              { \PassOptionsToClass{#1}{article} }
+          }
+          { \PassOptionsToClass{#1}{article} }
+      }
   }
 \cs_new_protected:Npn \dndnote_process_current_option:
   {
@@ -27,7 +46,7 @@
 \LoadClass{article}
 
 \RequirePackage{iftex}
-\RequirePackage[margin=20mm]{geometry}
+\RequirePackage[margin=\dndnotemargin]{geometry}
 \RequirePackage{graphicx}
 \RequirePackage{eso-pic}
 
