@@ -76,6 +76,12 @@
   }%
 }
 
+\newcommand{\dndnotegreeting}[1]{%
+  \par
+  #1\par
+  \vspace{0.5\baselineskip}%
+}
+
 \makeatletter
 \newcommand{\dndnotesetmainfont}[1]{%
   \filename@parse{#1}%
