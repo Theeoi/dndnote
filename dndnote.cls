@@ -136,6 +136,16 @@
   \fi
 }
 
+\makeatletter
+\newcommand{\dndnote@ensurepage}{%
+  \ifnum\value{page}=1\relax
+    \ifdim\pagetotal=0pt\relax
+      \null
+    \fi
+  \fi
+}
+\makeatother
+
 \AtBeginDocument{%
   \dndnotebaselineskip=\dndnotefontsize\relax
   \fontsize{\dndnotefontsize}{\dndnotebaselineskip}\selectfont
@@ -151,3 +161,9 @@
     \fi
   \fi
 }
+
+\makeatletter
+\AtEndDocument{%
+  \dndnote@ensurepage
+}
+\makeatother
