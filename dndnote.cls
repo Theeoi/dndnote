@@ -82,7 +82,7 @@
 \newcommand{\dndnotegreeting}[1]{%
     \par
     #1\par
-    \vspace{0.5\baselineskip}%
+    \vspace{\dimexpr0.8\baselineskip-\parskip\relax}%
 }
 
 \makeatletter
@@ -154,6 +154,7 @@
 \AtBeginDocument{%
     \dndnotebaselineskip=\dndnotefontsize\relax
     \fontsize{\dndnotefontsize}{\dndnotebaselineskip}\selectfont
+    \setlength{\parskip}{0.6\baselineskip}%
     \raggedright
     \pagestyle{empty}
     \AddToShipoutPictureBG{\dndnoteapplybackground}%
