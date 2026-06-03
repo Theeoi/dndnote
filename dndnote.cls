@@ -7,37 +7,38 @@
 
 \ExplSyntaxOn
 \cs_new_protected:Npn \dndnote_set_margin:n #1
-  {
+{
     \renewcommand{\dndnotemargin}{#1}
-  }
+}
 \cs_new_protected:Npn \dndnote_process_option:n #1
-  {
+{
     \regex_match:nnTF { \A \d+pt \Z } {#1}
-      { \renewcommand{\dndnotefontsize}{#1} }
-      {
+    { \renewcommand{\dndnotefontsize}{#1} }
+    {
         \seq_set_split:Nnn \l_tmpa_seq { = } {#1}
         \int_compare:nNnTF { \seq_count:N \l_tmpa_seq } = { 2 }
-          {
+        {
             \str_if_eq:eeTF { \seq_item:Nn \l_tmpa_seq { 1 } } { margin }
-              {
+            {
                 \tl_set:Ne \l_tmpa_tl { \seq_item:Nn \l_tmpa_seq { 2 } }
-                \regex_match:nVTF { \A (?: \d+ | \d+\.\d+ ) (?: pt | mm | cm | in ) \Z } \l_tmpa_tl
-                  { \exp_args:NV \dndnote_set_margin:n \l_tmpa_tl }
-                  { \PassOptionsToClass{#1}{article} }
-              }
-              { \PassOptionsToClass{#1}{article} }
-          }
-          { \PassOptionsToClass{#1}{article} }
-      }
-  }
+                \regex_match:nVTF { \A (?: \d+ | \d+\.\d+ ) (?: pt |
+                mm | cm | in ) \Z } \l_tmpa_tl
+                { \exp_args:NV \dndnote_set_margin:n \l_tmpa_tl }
+                { \PassOptionsToClass{#1}{article} }
+            }
+            { \PassOptionsToClass{#1}{article} }
+        }
+        { \PassOptionsToClass{#1}{article} }
+    }
+}
 \cs_new_protected:Npn \dndnote_process_current_option:
-  {
+{
     \exp_args:NV \dndnote_process_option:n \CurrentOption
-  }
+}
 \cs_new_protected:Npn \dndnoteprocesscurrentoption
-  {
+{
     \dndnote_process_current_option:
-  }
+}
 \ExplSyntaxOff
 
 \DeclareOption*{\dndnoteprocesscurrentoption}
@@ -51,7 +52,7 @@
 \RequirePackage{eso-pic}
 
 \ifPDFTeX\else
-  \RequirePackage{fontspec}
+\RequirePackage{fontspec}
 \fi
 
 \newcommand{\dndnoteempty}{}
@@ -61,109 +62,114 @@
 \let\dndnotefontfile\dndnotedefaultfont
 
 \newcommand{\dndnotebackground}[1]{%
-  \gdef\dndnotebackgroundfile{#1}%
+    \gdef\dndnotebackgroundfile{#1}%
 }
 
 \newcommand{\dndnotefont}[1]{%
-  \gdef\dndnotefontfile{#1}%
+    \gdef\dndnotefontfile{#1}%
 }
 
 \newcommand{\dndnotesignature}[1]{%
-  \par
-  \addvspace{\baselineskip}%
-  {%
-    \raggedleft
-    \itshape
-    #1\par
-  }%
+    \par
+    \addvspace{\baselineskip}%
+    {%
+        \raggedleft
+        \itshape
+        #1\par
+    }%
 }
 
 \newcommand{\dndnotegreeting}[1]{%
-  \par
-  #1\par
-  \vspace{0.5\baselineskip}%
+    \par
+    #1\par
+    \vspace{0.5\baselineskip}%
 }
 
 \makeatletter
 \newcommand{\dndnotesetmainfont}[1]{%
-  \filename@parse{#1}%
-  \ifx\filename@area\@empty
-    \setmainfont[AutoFakeSlant]{#1}%
-  \else
-    \ifx\filename@ext\@empty
-      \setmainfont[Path={\filename@area},AutoFakeSlant]{\filename@base}%
-    \else
-      \setmainfont[Path={\filename@area},Extension={.\filename@ext},AutoFakeSlant]{\filename@base}%
-    \fi
-  \fi
-}
-\newcommand{\dndnoteapplyfont}[1]{%
-  \IfFontExistsTF{#1}{%
-    \dndnotesetmainfont{#1}%
-  }{%
     \filename@parse{#1}%
     \ifx\filename@area\@empty
-      \ifx\filename@ext\@empty
-        \ClassWarning{dndnote}{Font '#1' not found. Using the default LaTeX font}%
-      \else
-        \IfFileExists{#1}{%
-          \dndnotesetmainfont{#1}%
-        }{%
-          \ClassWarning{dndnote}{Font file '#1' not found. Using the default LaTeX font}%
-        }%
-      \fi
+    \setmainfont[AutoFakeSlant]{#1}%
     \else
-      \IfFileExists{#1}{%
-        \dndnotesetmainfont{#1}%
-      }{%
-        \ClassWarning{dndnote}{Font file '#1' not found. Using the default LaTeX font}%
-      }%
+    \ifx\filename@ext\@empty
+    \setmainfont[Path={\filename@area},AutoFakeSlant]{\filename@base}%
+    \else
+    \setmainfont[Path={\filename@area},Extension={.\filename@ext},AutoFakeSlant]{\filename@base}%
     \fi
-  }%
+    \fi
+}
+\newcommand{\dndnoteapplyfont}[1]{%
+    \IfFontExistsTF{#1}{%
+        \dndnotesetmainfont{#1}%
+    }{%
+        \filename@parse{#1}%
+        \ifx\filename@area\@empty
+        \ifx\filename@ext\@empty
+        \ClassWarning{dndnote}{Font '#1' not found. Using the default
+        LaTeX font}%
+        \else
+        \IfFileExists{#1}{%
+            \dndnotesetmainfont{#1}%
+        }{%
+            \ClassWarning{dndnote}{Font file '#1' not found. Using
+            the default LaTeX font}%
+        }%
+        \fi
+        \else
+        \IfFileExists{#1}{%
+            \dndnotesetmainfont{#1}%
+        }{%
+            \ClassWarning{dndnote}{Font file '#1' not found. Using
+            the default LaTeX font}%
+        }%
+        \fi
+    }%
 }
 \makeatother
 
 \newcommand{\dndnoteapplybackground}{%
-  \ifx\dndnotebackgroundfile\dndnoteempty
-  \else
+    \ifx\dndnotebackgroundfile\dndnoteempty
+    \else
     \IfFileExists{\dndnotebackgroundfile}{%
-      \AtPageLowerLeft{%
-        \includegraphics[width=\paperwidth,height=\paperheight]{\dndnotebackgroundfile}%
-      }%
+        \AtPageLowerLeft{%
+            \includegraphics[width=\paperwidth,height=\paperheight]{\dndnotebackgroundfile}%
+        }%
     }{%
-      \ClassWarning{dndnote}{Background file '\dndnotebackgroundfile' not found. Using default page background}%
+        \ClassWarning{dndnote}{Background file
+        '\dndnotebackgroundfile' not found. Using default page background}%
     }%
-  \fi
+    \fi
 }
 
 \makeatletter
 \newcommand{\dndnote@ensurepage}{%
-  \ifnum\value{page}=1\relax
+    \ifnum\value{page}=1\relax
     \ifdim\pagetotal=0pt\relax
-      \null
+    \null
     \fi
-  \fi
+    \fi
 }
 \makeatother
 
 \AtBeginDocument{%
-  \dndnotebaselineskip=\dndnotefontsize\relax
-  \fontsize{\dndnotefontsize}{\dndnotebaselineskip}\selectfont
-  \raggedright
-  \pagestyle{empty}
-  \AddToShipoutPictureBG{\dndnoteapplybackground}%
-  \ifx\dndnotefontfile\dndnoteempty
-  \else
-    \ifPDFTeX
-      \ClassWarning{dndnote}{Custom font files require XeLaTeX or LuaLaTeX. Using the default LaTeX font}%
+    \dndnotebaselineskip=\dndnotefontsize\relax
+    \fontsize{\dndnotefontsize}{\dndnotebaselineskip}\selectfont
+    \raggedright
+    \pagestyle{empty}
+    \AddToShipoutPictureBG{\dndnoteapplybackground}%
+    \ifx\dndnotefontfile\dndnoteempty
     \else
-      \dndnoteapplyfont{\dndnotefontfile}%
+    \ifPDFTeX
+    \ClassWarning{dndnote}{Custom font files require XeLaTeX or
+    LuaLaTeX. Using the default LaTeX font}%
+    \else
+    \dndnoteapplyfont{\dndnotefontfile}%
     \fi
-  \fi
+    \fi
 }
 
 \makeatletter
 \AtEndDocument{%
-  \dndnote@ensurepage
+    \dndnote@ensurepage
 }
 \makeatother
